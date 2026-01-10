@@ -51,16 +51,6 @@ type
                        //UndoCommand:TTypedChangeCommand;
                  end;
 
-  TOnGetOtherValues=procedure(var vsa:TZctnrVectorStrings;const valkey:string;const currobjgdbtype:PUserTypeDescriptor;const pcurcontext:pointer;const pcurrobj:pointer;{const GDBobj:boolean;}const f:TzeUnitsFormat);
-  TOnUpdateObjectInInsp=procedure(const EDContext:TEditorContext;const currobjgdbtype:PUserTypeDescriptor;const pcurcontext:pointer;const pcurrobj:pointer{;const GDBobj:boolean});
-  TOnNotify=procedure(const pcurcontext:pointer);
-
-  TObjInspCustom=TScrollBox;
-
-  TNameColumnWidthCorrector=record
-   LastClientWidth,LastNameColumnWidth:integer;
-  end;
-
   TDisplayedData=record
    PObj:PContent;
    PType:PUserTypeDescriptor;
@@ -68,6 +58,16 @@ type
    UnitsFormat:TzeUnitsFormat;
    constructor CreateRec(const APOdj:PContent;const APType:PUserTypeDescriptor;const ACtx:PContext;const AUnitsFormat:TzeUnitsFormat);
    procedure Clear;
+  end;
+
+  TOnGetOtherValues=procedure(var vsa:TZctnrVectorStrings;const valkey:string;const DisplayedData:TDisplayedData);
+  TOnUpdateObjectInInsp=procedure(const EDContext:TEditorContext;const currobjgdbtype:PUserTypeDescriptor;const pcurcontext:pointer;const pcurrobj:pointer{;const GDBobj:boolean});
+  TOnNotify=procedure(const pcurcontext:pointer);
+
+  TObjInspCustom=TScrollBox;
+
+  TNameColumnWidthCorrector=record
+   LastClientWidth,LastNameColumnWidth:integer;
   end;
 
   TGDBobjinsp=class(TObjInspCustom)
@@ -1563,7 +1563,7 @@ begin
        vsa.init(50);
 
        if assigned(onGetOtherValues) then
-          onGetOtherValues(vsa,pp^.valkey,CurrData.PType,CurrData.Ctx,CurrData.PObj,{GDBobj,}CurrData.UnitsFormat);
+          onGetOtherValues(vsa,pp^.valkey,CurrData);
 
        if assigned(pp^.valueAddres) then
        begin
